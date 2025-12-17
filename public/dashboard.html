@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sistem Absensi Sekolah</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* sidebar default */
+.sidebar {
+  transition: transform 0.3s ease;
+}
+
+/* sidebar disembunyikan */
+.sidebar.hide {
+  transform: translateX(-100%);
+}
+
+/* optional: khusus mobile */
+@media (min-width: 768px) {
+  .sidebar.hide {
+    transform: translateX(0);
+  }
+}
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-school"></i>
+        <span>Absensi Sekolah</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item active" data-page="overview">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </li>
+          <li class="nav-item" data-page="classes">
+            <i class="fas fa-door-open"></i>
+            <span>Kelola Kelas</span>
+          </li>
+          <li class="nav-item" data-page="teachers">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Kelola Guru</span>
+          </li>
+          <li class="nav-item" data-page="students">
+            <i class="fas fa-user-graduate"></i>
+            <span>Kelola Siswa</span>
+          </li>
+          <li class="nav-item" data-page="attendance">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Absensi</span>
+          </li>
+          <li class="nav-item" data-page="permissions">
+            <i class="fas fa-file-alt"></i>
+            <span>Izin & Sakit</span>
+          </li>
+          <li class="nav-item" data-page="whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp Bot</span>
+          </li>
+          <li class="nav-item" data-page="logs">
+            <i class="fas fa-history"></i>
+            <span>Log Aktivitas</span>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="btn btn-outline btn-full">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="main-header">
+        <div class="header-left">
+          <button id="sidebarToggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="header-right">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="badge" id="notificationBadge">0</span>
+          </div>
+          <div class="user-info">
+            <span id="userName">Admin</span>
+            <i class="fas fa-user-circle"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-area" id="contentArea">
+        <!-- Dashboard Overview -->
+        <div id="page-overview" class="page-content active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon bg-blue">
+                <i class="fas fa-user-graduate"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="totalStudents">0</h3>
+                <p>Total Siswa</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-green">
+                <i class="fas fa-chalkboard-teacher"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="totalTeachers">0</h3>
+                <p>Total Guru</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-purple">
+                <i class="fas fa-door-open"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="totalClasses">0</h3>
+                <p>Total Kelas</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-orange">
+                <i class="fas fa-clipboard-check"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="todayAttendance">0</h3>
+                <p>Absensi Hari Ini</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>Ringkasan Absensi Hari Ini</h3>
+              </div>
+              <div class="card-body">
+                <div class="attendance-summary">
+                  <div class="summary-item hadir">
+                    <span class="count" id="hadirCount">0</span>
+                    <span class="label">Hadir</span>
+                  </div>
+                  <div class="summary-item izin">
+                    <span class="count" id="izinCount">0</span>
+                    <span class="label">Izin</span>
+                  </div>
+                  <div class="summary-item sakit">
+                    <span class="count" id="sakitCount">0</span>
+                    <span class="label">Sakit</span>
+                  </div>
+                  <div class="summary-item alpha">
+                    <span class="count" id="alphaCount">0</span>
+                    <span class="label">Alpha</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Aktivitas Terbaru</h3>
+              </div>
+              <div class="card-body">
+                <ul class="activity-list" id="activityList">
+                  <li class="loading">Memuat aktivitas...</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Classes Page -->
+        <div id="page-classes" class="page-content">
+          <div class="page-header">
+            <h3>Kelola Kelas</h3>
+            <button class="btn btn-primary" onclick="showAddClassModal()">
+              <i class="fas fa-plus"></i> Tambah Kelas
+            </button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nama Kelas</th>
+                  <th>Tingkat</th>
+                  <th>Jurusan</th>
+                  <th>Wali Kelas</th>
+                  <th>Tahun Ajaran</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="classesTableBody">
+                <tr><td colspan="6" class="loading">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Teachers Page -->
+        <div id="page-teachers" class="page-content">
+          <div class="page-header">
+            <h3>Kelola Guru</h3>
+            <button class="btn btn-primary" onclick="showAddTeacherModal()">
+              <i class="fas fa-plus"></i> Tambah Guru
+            </button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>NIP</th>
+                  <th>Nama Lengkap</th>
+                  <th>Mata Pelajaran</th>
+                  <th>WhatsApp</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="teachersTableBody">
+                <tr><td colspan="7" class="loading">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Students Page -->
+        <div id="page-students" class="page-content">
+          <div class="page-header">
+            <h3>Kelola Siswa</h3>
+            <button class="btn btn-primary" onclick="showAddStudentModal()">
+              <i class="fas fa-plus"></i> Tambah Siswa
+            </button>
+          </div>
+          <div class="filters">
+            <select id="filterClass" onchange="filterStudents()">
+              <option value="">Semua Kelas</option>
+            </select>
+            <input type="text" id="searchStudent" placeholder="Cari siswa..." onkeyup="filterStudents()">
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>NIS</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th>WhatsApp</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <tr><td colspan="7" class="loading">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Attendance Page -->
+        <div id="page-attendance" class="page-content">
+          <div class="page-header">
+            <h3>Absensi Harian</h3>
+          </div>
+          <div class="filters">
+            <select id="attendanceClass" onchange="loadClassAttendance()">
+              <option value="">Pilih Kelas</option>
+            </select>
+            <input type="date" id="attendanceDate" onchange="loadClassAttendance()">
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>NIS</th>
+                  <th>Nama Siswa</th>
+                  <th>Status</th>
+                  <th>Waktu</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr><td colspan="6" class="loading">Pilih kelas untuk melihat absensi</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Permissions Page -->
+        <div id="page-permissions" class="page-content">
+          <div class="page-header">
+            <h3>Pengajuan Izin & Sakit</h3>
+          </div>
+          <div class="filters">
+            <select id="filterPermissionStatus" onchange="filterPermissions()">
+              <option value="">Semua Status</option>
+              <option value="pending">Menunggu</option>
+              <option value="approved">Disetujui</option>
+              <option value="rejected">Ditolak</option>
+            </select>
+            <select id="filterPermissionType" onchange="filterPermissions()">
+              <option value="">Semua Jenis</option>
+              <option value="izin">Izin</option>
+              <option value="sakit">Sakit</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Siswa</th>
+                  <th>Kelas</th>
+                  <th>Jenis</th>
+                  <th>Periode</th>
+                  <th>Alasan</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="permissionsTableBody">
+                <tr><td colspan="8" class="loading">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- WhatsApp Page -->
+        <div id="page-whatsapp" class="page-content">
+          <div class="page-header">
+            <h3>WhatsApp Bot</h3>
+          </div>
+          <div class="whatsapp-section">
+            <div class="card">
+              <div class="card-header">
+                <h3>Status Koneksi</h3>
+              </div>
+              <div class="card-body">
+                <div class="wa-status">
+                  <div class="status-indicator" id="waStatusIndicator">
+                    <i class="fab fa-whatsapp"></i>
+                    <span id="waStatusText">Tidak Terhubung</span>
+                  </div>
+                  <div class="wa-info">
+                    <p>Nomor: <span id="waPhoneNumber">-</span></p>
+                    <p>Terakhir Terhubung: <span id="waLastConnected">-</span></p>
+                  </div>
+                </div>
+                <div class="wa-actions">
+                  <div class="form-group">
+                    <label>Nomor WhatsApp (format: 62xxx)</label>
+                    <input type="text" id="waConnectNumber" placeholder="62812345678">
+                  </div>
+                  <button class="btn btn-success" id="waConnectBtn" onclick="connectWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> Hubungkan
+                  </button>
+                  <button class="btn btn-danger" id="waDisconnectBtn" onclick="disconnectWhatsApp()" style="display:none;">
+                    <i class="fas fa-unlink"></i> Putuskan
+                  </button>
+                </div>
+                <div class="pairing-code" id="pairingCodeSection" style="display:none;">
+                  <h4>Pairing Code</h4>
+                  <div class="code" id="pairingCode"></div>
+                  <p>Masukkan kode ini di WhatsApp Anda</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Kirim Pesan Test</h3>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label>Nomor Tujuan</label>
+                  <input type="text" id="waTestNumber" placeholder="62812345678">
+                </div>
+                <div class="form-group">
+                  <label>Pesan</label>
+                  <textarea id="waTestMessage" rows="3" placeholder="Ketik pesan..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="sendTestMessage()">
+                  <i class="fas fa-paper-plane"></i> Kirim
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs Page -->
+        <div id="page-logs" class="page-content">
+          <div class="page-header">
+            <h3>Log Aktivitas</h3>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Aksi</th>
+                  <th>Entitas</th>
+                  <th>User</th>
+                  <th>Deskripsi</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody">
+                <tr><td colspan="5" class="loading">Memuat log...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script>
+  const navItems = document.querySelectorAll('.nav-item')
+  const sidebar = document.querySelector('.sidebar')
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // aktifin menu
+      navItems.forEach(i => i.classList.remove('active'))
+      item.classList.add('active')
+
+      // auto hide sidebar
+      sidebar.classList.add('hide')
+    })
+  })
+  </script>
+</body>
+</html>

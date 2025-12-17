@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistem Absensi Sekolah</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <i class="fas fa-school"></i>
+        <h1>Login</h1>
+        <p id="loginSubtitle">Masuk ke Sistem Absensi Sekolah</p>
+      </div>
+
+      <div class="role-tabs">
+        <button class="role-tab active" data-role="admin">
+          <i class="fas fa-user-cog"></i> Admin
+        </button>
+        <button class="role-tab" data-role="teacher">
+          <i class="fas fa-chalkboard-teacher"></i> Guru
+        </button>
+        <button class="role-tab" data-role="student">
+          <i class="fas fa-user-graduate"></i> Siswa
+        </button>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="identifier">
+            <i class="fas fa-user"></i>
+            <span id="identifierLabel">Username</span>
+          </label>
+          <input type="text" id="identifier" name="identifier" required placeholder="Masukkan username">
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i>
+            <span>Password</span>
+          </label>
+          <input type="password" id="password" name="password" required placeholder="Masukkan password">
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-full">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">Kembali ke Beranda</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>
