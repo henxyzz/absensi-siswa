@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install deps, termasuk drizzle-kit dev dependency
-RUN npm ci --ignore-scripts \
+RUN npm install \
     && npm install --save-dev drizzle-kit 2>&1
 
 # Copy semua source
